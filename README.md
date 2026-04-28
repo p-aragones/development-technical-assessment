@@ -4,7 +4,7 @@
 
 To complete this technical assessment, you will need:
 
-- Node.js v22\
+- Node.js v22
 - MongoDB v8.0
 
 A MongoDB dump is available at the following location:
