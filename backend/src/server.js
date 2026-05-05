@@ -1,5 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
+import javascriptExerciseRoutes from "./features/javascript/javascriptExercise.routes.js";
+import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -10,6 +12,9 @@ app.use(express.json());
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
+
+app.use("/javascript", javascriptExerciseRoutes);
+app.use(errorHandler);
 
 async function start() {
   await mongoose.connect(mongoUri);

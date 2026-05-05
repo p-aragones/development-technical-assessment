@@ -1,0 +1,56 @@
+.exercise-code-layout {
+  display: flex;
+  gap: 16px;
+}
+
+.exercise-code-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 420px;
+}
+
+.code-editor {
+  background: #fdfdfd;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  color: #222;
+  flex: 1;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  height: 216px;
+  padding: 16px;
+  resize: vertical;
+  tab-size: 2;
+  width: 420px;
+}
+
+.exercise-result {
+  color: #555;
+  margin-top: 16px;
+}
+
+.exercise-error {
+  color: #b00020;
+  margin-top: 16px;
+}
+
+.exercise-result table {
+  border-collapse: collapse;
+  color: #222;
+  margin-top: 8px;
+  min-width: 420px;
+}
+
+.exercise-result th,
+.exercise-result td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.exercise-result th {
+  background: #f2f2f2;
+}
