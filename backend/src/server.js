@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import javascriptExerciseRoutes from "./features/javascript/javascriptExercise.routes.js";
+import mongoExerciseRoutes from "./features/mongodb/mongoExercise.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -14,6 +15,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use("/javascript", javascriptExerciseRoutes);
+app.use("/mongo", mongoExerciseRoutes);
 app.use(errorHandler);
 
 async function start() {

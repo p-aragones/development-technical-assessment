@@ -1,0 +1,20 @@
+.mongo-exercise-error {
+  color: #b00020;
+}
+
+.mongo-exercise-table {
+  border-collapse: collapse;
+  margin-top: 16px;
+  min-width: 520px;
+}
+
+.mongo-exercise-table th,
+.mongo-exercise-table td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.mongo-exercise-table th {
+  background: #f2f2f2;
+}
