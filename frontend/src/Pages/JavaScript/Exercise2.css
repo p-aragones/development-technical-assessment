@@ -1,0 +1,50 @@
+.exercise-code-layout {
+    display: flex;
+}
+  
+.exercise-code-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.transactions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 220px;
+}
+
+.transactions > input {
+  width: 100%;
+}
+
+.exercise-error {
+  color: #b00020;
+  margin-top: 16px;
+}
+
+.exercise-result {
+  color: #555;
+  margin-top: 16px;
+}
+
+.exercise-result table {
+  border-collapse: collapse;
+  color: #222;
+  margin-top: 8px;
+  min-width: 420px;
+}
+
+.exercise-result th,
+.exercise-result td {
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  text-align: left;
+}
+
+.exercise-result th {
+  background: #f2f2f2;
+}
+  

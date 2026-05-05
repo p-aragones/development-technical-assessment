@@ -78,3 +78,84 @@ export function submitExercise1Code(code) {
     users,
   };
 }
+
+function getRandomAmount() {
+  const amount = Math.floor(Math.random() * 1000) - 500;
+
+  return amount === 0 ? 1 : amount;
+}
+
+export function generateTransactions(users, transactions) {
+  const generatedTransactions = [];
+
+  for (let userIndex = 1; userIndex <= users; userIndex++) {
+    generatedTransactions.push({
+      userId: `u${userIndex}`,
+      amount: getRandomAmount(),
+    });
+  }
+
+  for (
+    let transactionIndex = users;
+    transactionIndex < transactions;
+    transactionIndex++
+  ) {
+    const randomUserId = Math.floor(Math.random() * users) + 1;
+
+    generatedTransactions.push({
+      userId: `u${randomUserId}`,
+      amount: getRandomAmount(),
+    });
+  }
+
+  return generatedTransactions;
+}
+
+export function exercise2OldCode(users, transactions) {
+  const generatedTransactions = generateTransactions(users, transactions);
+  const startTime = performance.now();
+  let result = [];
+
+  for (let i = 0; i < generatedTransactions.length; i++) {
+    let total = 0;
+    for (let j = 0; j < generatedTransactions.length; j++) {
+      if (generatedTransactions[j].userId === generatedTransactions[i].userId) {
+        total += generatedTransactions[j].amount;
+      }
+    }
+    result.push({ userId: generatedTransactions[i].userId, total });
+  }
+  const durationInSeconds = (performance.now() - startTime) / 1000;
+
+  return {
+    message: "Old Function completed",
+    result,
+    durationInSeconds,
+  };
+}
+
+export function exercise2NewCode(users, transactions) {
+  const generatedTransactions = generateTransactions(users, transactions);
+  const startTime = performance.now();
+  const totals = {};
+  let result = [];
+
+  for (const t of generatedTransactions) {
+    if (!totals[t.userId]) {
+      totals[t.userId] = 0;
+    }
+    totals[t.userId] += t.amount;
+  }
+
+  result = Object.entries(totals).map(([userId, total]) => ({
+    userId,
+    total,
+  }));
+  const durationInSeconds = (performance.now() - startTime) / 1000;
+
+  return {
+    message: "New Function completed",
+    result,
+    durationInSeconds,
+  };
+}
