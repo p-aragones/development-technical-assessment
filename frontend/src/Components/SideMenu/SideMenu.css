@@ -1,0 +1,30 @@
+.side-menu {
+  border-right: 1px solid #ddd;
+  min-height: 100vh;
+  padding: 24px;
+  width: 260px;
+}
+
+.side-menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.side-menu a {
+  color: #222;
+  padding: 8px;
+  text-decoration: none;
+}
+
+.side-menu a.active {
+  background: #f2f2f2;
+  font-weight: 700;
+}
+
+.side-menu-title {
+  color: #555;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 16px 0 4px;
+}
