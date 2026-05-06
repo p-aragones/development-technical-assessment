@@ -1,7 +1,7 @@
-import { User } from "../../models/index.js";
+import { Transaction, User,  Order, OrderItem} from "../../models/index.js";
 
 // Finds completed orders that belong to the current user in the aggregation.
-function matchCompletedOrdersForCurrentUser() {
+function matchCompletedOrders() {
   return {
     $match: {
       $expr: {
@@ -44,7 +44,7 @@ function addOrderAmount() {
 }
 
 // Keeps only the fields needed for the user spending totals.
-function keepOrderAmountOnly() {
+function keepOrderAmount() {
   return {
     $project: {
       _id: 1,
@@ -54,16 +54,16 @@ function keepOrderAmountOnly() {
 }
 
 // Loads completed orders with their calculated amounts for each user.
-function lookupCompletedOrdersWithAmounts() {
+function lookupCompletedOrders() {
   return {
     $lookup: {
       from: "orders",
       let: { userId: "$_id" },
       pipeline: [
-        matchCompletedOrdersForCurrentUser(),
+        matchCompletedOrders(),
         lookupOrderItems(),
         addOrderAmount(),
-        keepOrderAmountOnly(),
+        keepOrderAmount(),
       ],
       as: "completedOrders",
     },
@@ -71,7 +71,7 @@ function lookupCompletedOrdersWithAmounts() {
 }
 
 // Calculates total completed orders and total spending per user.
-function addUserSpendingTotals() {
+function addUserSpending() {
   return {
     $addFields: {
       totalOrders: { $size: "$completedOrders" },
@@ -81,7 +81,7 @@ function addUserSpendingTotals() {
 }
 
 // Filters users whose total spending is greater than the given amount.
-function matchUsersWithSpendingGreaterThan(amount) {
+function filterUserSpending(amount) {
   return {
     $match: {
       totalAmountSpent: { $gt: amount },
@@ -90,7 +90,7 @@ function matchUsersWithSpendingGreaterThan(amount) {
 }
 
 // Shapes the final response fields returned to the frontend.
-function formatUserSpendingResult() {
+function formatUserSpending() {
   return {
     $project: {
       _id: 0,
@@ -102,7 +102,7 @@ function formatUserSpendingResult() {
 }
 
 // Sorts users by total spending from highest to lowest.
-function sortBySpendingDescending() {
+function sortSpending() {
   return {
     $sort: {
       totalAmountSpent: -1,
@@ -113,10 +113,40 @@ function sortBySpendingDescending() {
 // Returns users with completed-order spending greater than 500.
 export function getUserSpending() {
   return User.aggregate([
-    lookupCompletedOrdersWithAmounts(),
-    addUserSpendingTotals(),
-    matchUsersWithSpendingGreaterThan(500),
-    formatUserSpendingResult(),
-    sortBySpendingDescending(),
+    lookupCompletedOrders(),
+    addUserSpending(),
+    filterUserSpending(500),
+    formatUserSpending(),
+    sortSpending(),
   ]);
+}
+
+// -- Exercise 2 -- //
+
+export async function getTransactionMismatch() {
+  const transactions = await Transaction.find({status: "completed"});
+  const mismatched = []
+
+  for (const t of transactions) {
+    if (!t.orderId) continue
+    const order = await Order.findById(t.orderId);
+    if (!order) continue
+    const items = await OrderItem.find({ orderId: order._id });
+    let total = 0
+    for (const item of items) {
+      total += item.price * item.quantity
+    }
+    if (total.toFixed(2) != t.amount.toFixed(2)) {
+      const user = await User.findById(order.userId)
+      mismatched.push({
+        name: user.name,
+        email: user.email,
+        transactionId: t._id,
+        transactionAmount: t.amount,
+        orderId: order._id,
+        orderAmount: total.toFixed(2)
+      })
+    }
+  }
+  return mismatched
 }

@@ -1,7 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
-import javascriptExerciseRoutes from "./features/javascript/javascriptExercise.routes.js";
-import mongoExerciseRoutes from "./features/mongodb/mongoExercise.routes.js";
+import javascriptExerciseRoutes from "./enpoints/javascript/javascriptExercise.routes.js";
+import mongoExerciseRoutes from "./enpoints/mongodb/mongoExercise.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
