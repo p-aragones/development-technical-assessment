@@ -150,3 +150,93 @@ export async function getTransactionMismatch() {
   }
   return mismatched
 }
+
+// -- Exercise 3 -- //
+
+// export async function getRetriedTransactions() {
+//   const failedTransactions = await Transaction.find({status: "failed"});
+//   const retriedOrders = new Set();
+  
+//   for (const failed of failedTransactions) {
+//     const retry = await Transaction.findOne({
+//       orderId: failed.orderId,
+//       status: "completed"
+//     });
+  
+//     if (retry) {
+//       retriedOrders.add(failed.orderId.toString());
+//     }
+//   }
+// }
+
+export async function getRetriedTransactions() {
+  return await Transaction.aggregate([
+
+    { $sort: { orderId: 1, createdAt: 1 } },
+  
+    {
+      $group: {
+        _id: "$orderId",
+        totalTransactions: { $sum: 1 },
+        transactions: {
+          $push: {
+            _id: "$_id",
+            status: "$status",
+            createdAt: "$createdAt"
+          }
+        },
+        lastTransaction: { $last: "$$ROOT" }
+      }
+    },
+  
+    {
+      $addFields: {
+        wasRetried: {
+          $function: {
+            lang: "js",
+            args: ["$transactions"],
+            body: function (trans) {
+              let seenFailed = false;
+  
+              for (const t of trans) {
+                if (seenFailed) return true;
+                if (t.status === "failed") seenFailed = true;
+              }
+  
+              return false;
+            }
+          }
+        }
+      }
+    },
+  
+    {
+      $match: {
+        wasRetried: true
+      }
+    },
+  
+    {
+      $lookup: {
+        from: "orders",
+        localField: "_id",
+        foreignField: "_id",
+        as: "order"
+      }
+    },
+  
+    { $unwind: "$order" },
+  
+    {
+      $project: {
+        orderId: "$_id",
+        totalTransactions: 1,
+        mostRecentTransactionDate: "$lastTransaction.createdAt",
+        mostRecentTransactionStatus: "$lastTransaction.status",
+        mostRecentTransactionId: "$lastTransaction._id",
+        orderStatus: "$order.status",
+        wasRetried: 1
+      }
+    }
+  ]);
+}

@@ -7,3 +7,7 @@ export function getUserSpending() {
 export function getTransactionMismatch() {
   return apiRequest("/mongo/getTransactionMismatch");
 }
+
+export function getRetriedTransactions() {
+  return apiRequest("/mongo/getRetriedTransactions");
+}
